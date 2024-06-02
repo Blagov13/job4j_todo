@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TaskStore {
     private final SessionFactory sf;
-    private static final Logger logger = LoggerFactory.getLogger(TaskStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
 
     public List<Task> findAll() {
         var session = sf.openSession();
@@ -23,7 +23,7 @@ public class TaskStore {
             result = session.createQuery("from Task", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -39,7 +39,7 @@ public class TaskStore {
             result = session.get(Task.class, id);
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -54,7 +54,7 @@ public class TaskStore {
             session.save(task);
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -68,7 +68,7 @@ public class TaskStore {
             session.update(task);
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -82,7 +82,7 @@ public class TaskStore {
             session.delete(task);
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -97,7 +97,7 @@ public class TaskStore {
             result = session.createQuery("from Task as i where i.done = true", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -113,7 +113,7 @@ public class TaskStore {
             result = session.createQuery("from Task as i where i.done = false", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
-            logger.error("Во время транзакции произошла ошибка", e);
+            LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();

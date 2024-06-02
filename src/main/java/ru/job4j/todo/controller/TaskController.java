@@ -18,18 +18,11 @@ public class TaskController {
 
     @GetMapping
     public String list(@RequestParam(required = false, defaultValue = "all") String filter, Model model) {
-        List<Task> tasks;
-        switch (filter) {
-            case "completed":
-                tasks = service.findCompleted();
-                break;
-            case "new":
-                tasks = service.findNew();
-                break;
-            default:
-                tasks = service.findAll();
-                break;
-        }
+        List<Task> tasks = switch (filter) {
+            case "completed" -> service.findCompleted();
+            case "new" -> service.findNew();
+            default -> service.findAll();
+        };
         model.addAttribute("tasks", tasks);
         model.addAttribute("filter", filter);
         return "tasks/list";
@@ -66,6 +59,7 @@ public class TaskController {
         service.update(task);
         return "redirect:/tasks";
     }
+
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable int id) {
         service.delete(service.findById(id));
