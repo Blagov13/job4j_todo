@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class TaskStore {
         return result;
     }
 
-    public Task findById(int id) {
+    public Optional<Task> findById(int id) {
         var session = sf.openSession();
         Task result = null;
         try {
@@ -44,7 +45,7 @@ public class TaskStore {
         } finally {
             session.close();
         }
-        return result;
+        return Optional.ofNullable(result);
     }
 
     public void save(Task task) {
@@ -61,32 +62,38 @@ public class TaskStore {
         }
     }
 
-    public void update(Task task) {
+    public boolean update(Task task) {
         var session = sf.openSession();
+        boolean isSuccess = false;
         try {
             session.beginTransaction();
             session.update(task);
             session.getTransaction().commit();
+            isSuccess = true;
         } catch (Exception e) {
             LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
+        return isSuccess;
     }
 
-    public void delete(Task task) {
+    public boolean delete(int id) {
         var session = sf.openSession();
+        boolean isSuccess = false;
         try {
             session.beginTransaction();
-            session.delete(task);
+            session.delete(session.get(Task.class, id));
             session.getTransaction().commit();
+            isSuccess = true;
         } catch (Exception e) {
             LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
+        return isSuccess;
     }
 
     public List<Task> findCompleted() {
@@ -119,5 +126,23 @@ public class TaskStore {
             session.close();
         }
         return result;
+    }
+
+    public boolean updateDone(int id, boolean done) {
+        var session = sf.openSession();
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("update Task set done = :done where id = :id");
+            query.setParameter("done", done);
+            query.setParameter("id", id);
+            int result = query.executeUpdate();
+            session.getTransaction().commit();
+            return result > 0;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            return false;
+        } finally {
+            session.close();
+        }
     }
 }

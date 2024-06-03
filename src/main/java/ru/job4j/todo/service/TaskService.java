@@ -6,6 +6,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskStore;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class TaskService {
         return store.findAll();
     }
 
-    public Task findById(int id) {
+    public Optional<Task> findById(int id) {
         return store.findById(id);
     }
 
@@ -24,12 +25,12 @@ public class TaskService {
         store.save(task);
     }
 
-    public void update(Task task) {
-        store.update(task);
+    public boolean update(Task task) {
+        return store.update(task);
     }
 
-    public void delete(Task task) {
-        store.delete(task);
+    public boolean delete(int id) {
+        return store.delete(id);
     }
 
     public List<Task> findCompleted() {
@@ -38,5 +39,9 @@ public class TaskService {
 
     public List<Task> findNew() {
         return store.findNew();
+    }
+
+    public boolean updateDone(int id, boolean done) {
+        return store.updateDone(id, done);
     }
 }
