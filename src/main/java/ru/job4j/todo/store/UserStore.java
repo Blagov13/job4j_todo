@@ -22,13 +22,14 @@ public class UserStore {
             session.beginTransaction();
             session.save(user);
             session.getTransaction().commit();
+            return Optional.of(user);
         } catch (Exception e) {
             LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return Optional.of(user);
+        return Optional.empty();
     }
 
     public Optional<User> findByLogin(String login) {
