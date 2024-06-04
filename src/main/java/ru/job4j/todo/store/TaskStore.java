@@ -1,157 +1,51 @@
 package ru.job4j.todo.store;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
 public class TaskStore {
-    private final SessionFactory sf;
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
+    private final CrudStore crudStore;
 
     public List<Task> findAll() {
-        var session = sf.openSession();
-        List<Task> result = List.of();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from Task", Task.class).list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return result;
+        return crudStore.query("from Task", Task.class);
     }
 
     public Optional<Task> findById(int id) {
-        var session = sf.openSession();
-        Task result = null;
-        try {
-            session.beginTransaction();
-            result = session.get(Task.class, id);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return Optional.ofNullable(result);
+        return crudStore.optional("from Task where id = :fId", Task.class, Map.of("fId", id));
     }
 
     public void save(Task task) {
-        var session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.save(task);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
+        crudStore.run(session -> session.save(task));
     }
 
     public boolean update(Task task) {
-        var session = sf.openSession();
-        boolean isSuccess = false;
-        try {
-            session.beginTransaction();
-            var query = session.createQuery("UPDATE Task SET title = :title, description = :description, "
-                            + "created = :created, done = :done WHERE id = :id")
-                    .setParameter("title", task.getTitle())
-                    .setParameter("description", task.getDescription())
-                    .setParameter("created", task.getCreated())
-                    .setParameter("done", task.isDone())
-                    .setParameter("id", task.getId());
-            int rsl = query.executeUpdate();
-            session.getTransaction().commit();
-            isSuccess = rsl > 0;
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return isSuccess;
+        crudStore.run(session ->
+                session.update(task));
+        return true;
     }
 
     public boolean delete(int id) {
-        var session = sf.openSession();
-        boolean isSuccess = false;
-        try {
-            session.beginTransaction();
-            var query = session.createQuery("DELETE FROM Task WHERE id = :id");
-            query.setParameter("id", id);
-            int result = query.executeUpdate();
-            session.getTransaction().commit();
-            isSuccess = result > 0;
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return isSuccess;
+        crudStore.run("delete from Task where id = :fId", Map.of("fId", id));
+        return true;
     }
 
     public List<Task> findCompleted() {
-        var session = sf.openSession();
-        List<Task> result = List.of();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from Task as i where i.done = true", Task.class).list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return result;
+        return crudStore.query("from Task as i where i.done = true", Task.class);
     }
 
     public List<Task> findNew() {
-        var session = sf.openSession();
-        List<Task> result = List.of();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from Task as i where i.done = false", Task.class).list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            LOGGER.error("Во время транзакции произошла ошибка", e);
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return result;
+        return crudStore.query("from Task as i where i.done = false", Task.class);
     }
 
     public boolean updateDone(int id, boolean done) {
-        var session = sf.openSession();
-        try {
-            session.beginTransaction();
-            var query = session.createQuery("update Task set done = :done where id = :id");
-            query.setParameter("done", done);
-            query.setParameter("id", id);
-            int result = query.executeUpdate();
-            session.getTransaction().commit();
-            return result > 0;
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            return false;
-        } finally {
-            session.close();
-        }
+        crudStore.run("update Task set done = :fDone where id = :fId", Map.of("fDone", done, "fId", id));
+        return true;
     }
 }
