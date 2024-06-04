@@ -1,6 +1,8 @@
 package ru.job4j.todo.model;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,4 +28,8 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "todo_user_id")
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "priority_id")
+    @Fetch(FetchMode.JOIN)
+    private Priority priority;
 }

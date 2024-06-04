@@ -95,6 +95,7 @@
                 <th scope="col">Статус</th>
                 <th scope="col">Действия</th>
                 <th scope="col">Создатель</th>
+                <th scope="col">Приоритет</th>
             </tr>
             </thead>
             <tbody>
@@ -116,6 +117,7 @@
                     </form>
                 </td>
                 <td th:text="${task.user.name}">Task Creator</td>
+                <td th:text="${task.priority.name}">Priority</td>
             </tr>
             </tbody>
         </table>
