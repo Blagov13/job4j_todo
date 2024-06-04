@@ -67,9 +67,16 @@ public class TaskStore {
         boolean isSuccess = false;
         try {
             session.beginTransaction();
-            session.update(task);
+            var query = session.createQuery("UPDATE Task SET title = :title, description = :description, "
+                            + "created = :created, done = :done WHERE id = :id")
+                    .setParameter("title", task.getTitle())
+                    .setParameter("description", task.getDescription())
+                    .setParameter("created", task.getCreated())
+                    .setParameter("done", task.isDone())
+                    .setParameter("id", task.getId());
+            int rsl = query.executeUpdate();
             session.getTransaction().commit();
-            isSuccess = true;
+            isSuccess = rsl > 0;
         } catch (Exception e) {
             LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();
@@ -84,9 +91,11 @@ public class TaskStore {
         boolean isSuccess = false;
         try {
             session.beginTransaction();
-            session.delete(session.get(Task.class, id));
+            var query = session.createQuery("DELETE FROM Task WHERE id = :id");
+            query.setParameter("id", id);
+            int result = query.executeUpdate();
             session.getTransaction().commit();
-            isSuccess = true;
+            isSuccess = result > 0;
         } catch (Exception e) {
             LOGGER.error("Во время транзакции произошла ошибка", e);
             session.getTransaction().rollback();

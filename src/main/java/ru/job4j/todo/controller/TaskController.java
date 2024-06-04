@@ -74,15 +74,8 @@ public class TaskController {
 
     @PostMapping("/{id}/edit")
     public String edit(@PathVariable int id, @ModelAttribute Task task) {
-        Task existingTask = service.findById(id).orElse(null);
-        if (existingTask == null) {
-            return "errors/404";
-        }
-        task.setId(existingTask.getId());
-        existingTask.setTitle(task.getTitle());
-        existingTask.setDescription(task.getDescription());
-        existingTask.setDone(task.isDone());
-        boolean isUpdate = service.update(existingTask);
+        task.setId(id);
+        boolean isUpdate = service.update(task);
         if (!isUpdate) {
             return "errors/404";
         }
