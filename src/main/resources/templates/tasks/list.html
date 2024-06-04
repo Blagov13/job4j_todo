@@ -94,6 +94,7 @@
                 <th scope="col">Дата</th>
                 <th scope="col">Статус</th>
                 <th scope="col">Действия</th>
+                <th scope="col">Создатель</th>
             </tr>
             </thead>
             <tbody>
@@ -114,6 +115,7 @@
                         <button type="submit" class="btn-action"><i class="fas fa-check"></i></button>
                     </form>
                 </td>
+                <td th:text="${task.user.name}">Task Creator</td>
             </tr>
             </tbody>
         </table>

@@ -78,6 +78,10 @@
                 <td th:text="${task.created}">Created</td>
             </tr>
             <tr>
+                <th>Создатель</th>
+                <td th:text="${task.user.name}">Task Creator</td>
+            </tr>
+            <tr>
                 <th>Статус</th>
                 <td>
                     <span th:if="${task.done}" class="badge bg-success">Yes</span>
