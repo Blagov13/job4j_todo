@@ -13,4 +13,5 @@
     <include file="scripts/006_ddl_create_categories_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/007_ddl_create_schema_task_to_categories.sql" relativeToChangelogFile="true"/>
     <include file="scripts/008_dml_insert_categories.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/009_add_user_zone_to_todo_user.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

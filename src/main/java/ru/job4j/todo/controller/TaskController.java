@@ -12,9 +12,10 @@ import ru.job4j.todo.service.TaskService;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 @SessionAttributes("user")
@@ -38,8 +39,11 @@ public class TaskController {
 
     @GetMapping
     public String list(@RequestParam(required = false, defaultValue = "all") String filter, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        ZoneId userZoneId = getUserZoneId(user);
         Function<TaskService, List<Task>> strategy = filterStrategies.getOrDefault(filter, TaskService::findAll);
         List<Task> tasks = strategy.apply(service);
+        adjustTaskTimes(tasks, userZoneId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("filter", filter);
         return "tasks/list";
@@ -112,5 +116,26 @@ public class TaskController {
             return "errors/404";
         }
         return "redirect:/tasks";
+    }
+
+    private ZoneId getUserZoneId(User user) {
+        if (user != null && user.getUser_zone() != null) {
+            return ZoneId.of(user.getUser_zone().toLocalDateTime().toString());
+        } else {
+            return ZoneId.systemDefault();
+        }
+    }
+
+
+    private void adjustTaskTimes(List<Task> tasks, ZoneId userZoneId) {
+        for (Task task : tasks) {
+            task.setCreated(convertToUserZone(task.getCreated(), userZoneId));
+        }
+    }
+
+    private LocalDateTime convertToUserZone(LocalDateTime dateTime, ZoneId userZoneId) {
+        ZonedDateTime systemZonedDateTime = dateTime.atZone(ZoneId.systemDefault());
+        ZonedDateTime userZonedDateTime = systemZonedDateTime.withZoneSameInstant(userZoneId);
+        return userZonedDateTime.toLocalDateTime();
     }
 }

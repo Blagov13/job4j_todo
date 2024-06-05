@@ -3,6 +3,7 @@ package ru.job4j.todo.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "todo_user")
@@ -20,4 +21,5 @@ public class User {
     @EqualsAndHashCode.Include
     private String login;
     private String password;
+    private Timestamp user_zone;
 }

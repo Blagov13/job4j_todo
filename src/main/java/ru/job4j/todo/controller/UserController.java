@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.job4j.todo.config.TimeZoneWrapper;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.TimeZone;
 
 @Controller
 @AllArgsConstructor
@@ -19,8 +22,21 @@ import javax.servlet.http.HttpSession;
 public class UserController {
     private final UserService service;
 
+    /*Метод для загрузки списка поддерживаемых часовых поясов*/
+    private ArrayList<TimeZoneWrapper> getSupportedTimezones() {
+        ArrayList<TimeZoneWrapper> timezones = new ArrayList<>();
+        for (String timeId : TimeZone.getAvailableIDs()) {
+            TimeZone timeZone = TimeZone.getTimeZone(timeId);
+            timezones.add(new TimeZoneWrapper(timeId, timeZone.getDisplayName()));
+        }
+        return timezones;
+    }
+
     @GetMapping({"/", "/register"})
     public String getRegistrationPage(Model model, HttpSession session) {
+        model.addAttribute("user", new User());
+        ArrayList<TimeZoneWrapper> timezones = getSupportedTimezones();
+        model.addAttribute("timezones", timezones);
         return "users/registration";
     }
 
