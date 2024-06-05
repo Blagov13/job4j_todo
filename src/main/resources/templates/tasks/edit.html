@@ -55,7 +55,7 @@
         </div>
         <div class="form-group">
             <label for="priorityId">Приоритет</label>
-            <select id="priorityId" name="priorityId" class="form-select select-priority" required>
+            <select id="priorityId" name="priority.id" class="form-select select-priority" required>
                 <option th:each="priority : ${priorities}" th:value="${priority.id}"
                         th:text="${priority.name}"></option>
             </select>
