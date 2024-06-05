@@ -60,8 +60,8 @@
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
         <div class="mb-3">
-            <label for="time_zone" class="form-label">Часовой пояс</label>
-            <select class="form-control" id="time_zone" name="time_zone" required>
+            <label for="userZone" class="form-label">Часовой пояс</label>
+            <select class="form-control" id="userZone" name="userZone" required>
                 <option th:each="timezone : ${timezones}" th:value="${timezone.id}" th:text="${timezone.displayName}"></option>
             </select>
         </div>

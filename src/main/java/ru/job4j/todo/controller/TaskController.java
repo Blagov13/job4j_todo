@@ -119,8 +119,8 @@ public class TaskController {
     }
 
     private ZoneId getUserZoneId(User user) {
-        if (user != null && user.getUser_zone() != null) {
-            return ZoneId.of(user.getUser_zone().toLocalDateTime().toString());
+        if (user != null && user.getUserZone() != null) {
+            return ZoneId.of(user.getUserZone().toLocalDateTime().toString());
         } else {
             return ZoneId.systemDefault();
         }

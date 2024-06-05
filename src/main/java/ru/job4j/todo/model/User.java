@@ -21,5 +21,5 @@ public class User {
     @EqualsAndHashCode.Include
     private String login;
     private String password;
-    private Timestamp user_zone;
+    private Timestamp userZone;
 }
