@@ -6,6 +6,8 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -32,4 +34,12 @@ public class Task {
     @JoinColumn(name = "priority_id")
     @Fetch(FetchMode.JOIN)
     private Priority priority;
+    @ManyToMany
+    @JoinTable(
+            name = "task_to_categories",
+            joinColumns = {@JoinColumn(name = "task_id")},
+            inverseJoinColumns = {@JoinColumn(name = "categories_id")}
+    )
+    @Fetch(FetchMode.JOIN)
+    private List<Category> categories = new ArrayList<>();
 }

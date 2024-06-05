@@ -92,6 +92,14 @@
                     <span th:unless="${task.done}" class="badge bg-warning">No</span>
                 </td>
             </tr>
+            tr>
+            <th>Категории</th>
+            <td>
+                <ul>
+                    <li th:each="category : ${task.categories}" th:text="${category.name}"></li>
+                </ul>
+            </td>
+            </tr>
         </table>
     </div>
     <a href="/tasks" class="btn btn-primary">Назад</a>

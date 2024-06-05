@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
@@ -23,6 +24,7 @@ import java.util.function.Function;
 public class TaskController {
     private final TaskService service;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
     private Map<String, Function<TaskService, List<Task>>> filterStrategies;
 
     @PostConstruct
@@ -58,13 +60,15 @@ public class TaskController {
     public String createForm(Model model) {
         model.addAttribute("task", new Task());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping
-    public String create(@ModelAttribute Task task, HttpSession session) {
+    public String create(@ModelAttribute Task task, HttpSession session, @RequestParam List<Integer> categoryIds) {
         User currentUser = (User) session.getAttribute("user");
         task.setUser(currentUser);
+        task.setCategories(categoryService.findById(categoryIds));
         service.save(task);
         return "redirect:/tasks";
     }
@@ -77,12 +81,14 @@ public class TaskController {
         }
         model.addAttribute("task", taskOptional.get());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String edit(@PathVariable int id, @ModelAttribute Task task) {
+    public String edit(@PathVariable int id, @ModelAttribute Task task, @RequestParam List<Integer> categoryIds) {
         task.setId(id);
+        task.setCategories(categoryService.findById(categoryIds));
         boolean isUpdate = service.update(task);
         if (!isUpdate) {
             return "errors/404";
