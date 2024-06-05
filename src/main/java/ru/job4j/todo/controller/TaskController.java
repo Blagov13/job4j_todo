@@ -126,7 +126,6 @@ public class TaskController {
         }
     }
 
-
     private void adjustTaskTimes(List<Task> tasks, ZoneId userZoneId) {
         for (Task task : tasks) {
             task.setCreated(convertToUserZone(task.getCreated(), userZoneId));
