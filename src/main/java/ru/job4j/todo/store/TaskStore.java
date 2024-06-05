@@ -26,14 +26,22 @@ public class TaskStore {
     }
 
     public boolean update(Task task) {
-        crudStore.run(session ->
-                session.update(task));
-        return true;
+        try {
+            crudStore.run(session ->
+                    session.update(task));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean delete(int id) {
-        crudStore.run("delete from Task where id = :fId", Map.of("fId", id));
-        return true;
+        try {
+            crudStore.run("delete from Task where id = :fId", Map.of("fId", id));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public List<Task> findCompleted() {
@@ -45,7 +53,11 @@ public class TaskStore {
     }
 
     public boolean updateDone(int id, boolean done) {
-        crudStore.run("update Task set done = :fDone where id = :fId", Map.of("fDone", done, "fId", id));
-        return true;
+        try {
+            crudStore.run("update Task set done = :fDone where id = :fId", Map.of("fDone", done, "fId", id));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

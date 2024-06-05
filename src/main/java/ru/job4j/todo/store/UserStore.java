@@ -13,10 +13,14 @@ public class UserStore {
     private final CrudStore crudStore;
 
     public Optional<User> save(User user) {
-        return crudStore.tx(session -> {
-            session.save(user);
-            return Optional.of(user);
-        });
+        try {
+            return crudStore.tx(session -> {
+                session.save(user);
+                return Optional.of(user);
+            });
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<User> findByLogin(String login) {
