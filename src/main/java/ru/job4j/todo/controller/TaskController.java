@@ -119,11 +119,7 @@ public class TaskController {
     }
 
     private ZoneId getUserZoneId(User user) {
-        if (user != null && user.getUserZone() != null) {
-            return ZoneId.of(user.getUserZone().toLocalDateTime().toString());
-        } else {
-            return ZoneId.systemDefault();
-        }
+        return ZoneId.of(user.getUserZone());
     }
 
     private void adjustTaskTimes(List<Task> tasks, ZoneId userZoneId) {
