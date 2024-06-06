@@ -26,22 +26,26 @@ public class TaskStore {
     }
 
     public boolean update(Task task) {
-        try {
-            crudStore.run(session ->
-                    session.update(task));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        String query = "update Task set title = :title, description = :description,"
+                + "created = :created, done = :done, user = :user, priority = :priority, categories = :categories"
+                + " where id = :id";
+        Map<String, Object> params = Map.of(
+                "name", task.getTitle(),
+                "description", task.getDescription(),
+                "created", task.getCreated(),
+                "done", task.isDone(),
+                "user", task.getUser(),
+                "priority", task.getPriority(),
+                "categories", task.getCategories(),
+                "id", task.getId()
+        );
+        return crudStore.runWithResult(query, params);
     }
 
     public boolean delete(int id) {
-        try {
-            crudStore.run("delete from Task where id = :fId", Map.of("fId", id));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        String query = "delete from Task where id = :fId";
+        Map<String, Object> params = Map.of("fId", id);
+        return crudStore.runWithResult(query, params);
     }
 
     public List<Task> findCompleted() {

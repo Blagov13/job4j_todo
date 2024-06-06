@@ -85,4 +85,14 @@ public class CrudStore {
             session.close();
         }
     }
+
+    public boolean runWithResult(String query, Map<String, Object> args) {
+        return tx(session -> {
+            var sq = session.createQuery(query);
+            for (Map.Entry<String, Object> arg : args.entrySet()) {
+                sq.setParameter(arg.getKey(), arg.getValue());
+            }
+            return sq.executeUpdate() > 0;
+        });
+    }
 }
